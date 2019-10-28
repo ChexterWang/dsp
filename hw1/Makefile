@@ -1,6 +1,6 @@
 .PHONY: all clean run
-CC=gcc
-CFLAGS=-std=c99 -O2
+CC=g++
+CFLAGS=-g -Wall -std=c++11
 LDFLAGS=-lm
 TARGET=train test
 

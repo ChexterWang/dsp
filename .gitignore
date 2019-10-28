@@ -1,0 +1,6 @@
+**/hw1/data
+**/hw1/dsp_hw1.pdf
+**/hw1/model_*.txt
+**/hw1/*.o
+**/hw1/output
+**/hw1/src/test_hmm.c
