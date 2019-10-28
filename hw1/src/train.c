@@ -14,7 +14,7 @@
 #define MAX_STATE 6
 #define MAX_OBSERV 6
 #define SEQ_LENGTH 50
-#define MAX_SEQ 10
+#define MAX_SEQ 10000
 
 #include "../inc/hmm.h"
 #include "../inc/myString.h"
@@ -53,44 +53,94 @@ int main(int argc, char const *argv[]) {
    // declare forward/backward etc. variables
    double** alpha   = new double*[SEQ_LENGTH];
    double** beta    = new double*[SEQ_LENGTH];
-   double** gamma   = new double*[SEQ_LENGTH];
-   double** epsilon = new double*[SEQ_LENGTH];
+   double* gamma    = new double[MAX_STATE]{};
+   double** epsilon = new double*[MAX_STATE];
    for(int i = 0; i < SEQ_LENGTH; ++i){
       alpha[i]   = new double[MAX_STATE];
       beta[i]    = new double[MAX_STATE];
-      gamma[i]   = new double[MAX_STATE];
-      epsilon[i] = new double[MAX_STATE];
+      if(i < MAX_STATE) epsilon[i] = new double[MAX_STATE]{};
    }
 
-   // iteration
-   for(int current_iter = 0; current_iter < iter; ++current_iter){
+   for(int i = 0; i<iter; ++i){
+      // run every iteration
+      double pi[MAX_STATE]{};
+      double b[MAX_OBSERV][MAX_STATE]{};
+      // run every sequences
+      for(int current_seq = 0; current_seq < MAX_SEQ; ++current_seq){
 
-      cout << seqs[0] << endl;
-      // initialization
-      for(int current_state = 0; current_state < MAX_STATE; ++current_state){
-         alpha[0][current_state] = hmm_initial->initial[current_state]
-                                   *hmm_initial->observation[seqs[0][0]-'A'][current_state];
-      }
+         double p = 0;
 
-      // induction
-      for(int current_ob = 1; current_ob < SEQ_LENGTH; ++current_ob){
+         // TODO: initializtion: beta
+         // initialization: alpha, beta
          for(int current_state = 0; current_state < MAX_STATE; ++current_state){
-            double sum_alpha = 0;
-            for(int s = 0; s < MAX_STATE; ++s){
-               sum_alpha += alpha[current_ob-1][s]*hmm_initial->transition[s][current_state];
+            alpha[0][current_state] = hmm_initial->initial[current_state]
+                                      *hmm_initial->observation[seqs[current_seq][0]-'A'][current_state];
+            beta[SEQ_LENGTH-1][current_state] = 1;
+         }
+
+         // TODO: induction, termination: beta
+         // induction, termination: alpha, beta
+         for(int current_ob = 1; current_ob < SEQ_LENGTH; ++current_ob){
+            for(int current_state = 0; current_state < MAX_STATE; ++current_state){
+               double sum_alpha = 0, sum_beta = 0;
+               for(int s = 0; s < MAX_STATE; ++s){
+                  sum_alpha += alpha[current_ob-1][s]*hmm_initial->transition[s][current_state];
+                  sum_beta += beta[SEQ_LENGTH-current_ob][s]
+                              *hmm_initial->transition[current_state][s]
+                              *hmm_initial->observation[seqs[current_seq][SEQ_LENGTH-current_ob]-'A'][s];
+               }
+               alpha[current_ob][current_state] = sum_alpha*hmm_initial->observation[seqs[current_seq][current_ob]-'A'][current_state];
+               beta[SEQ_LENGTH-1-current_ob][current_state] = sum_beta;
             }
-            alpha[current_ob][current_state] = sum_alpha*hmm_initial->observation[seqs[0][current_ob]-'A'][current_state];
+         }
+
+         // TODO: create: gamma, epsilon
+         // p = P(O|Model)
+         for(int current_state = 0; current_state < MAX_STATE; ++current_state){
+            p += alpha[SEQ_LENGTH-1][current_state];
+         }
+         // for gamma, epsilon
+         for(int current_ob = 0; current_ob < SEQ_LENGTH-1; ++current_ob){
+            for(int current_state = 0; current_state < MAX_STATE; ++current_state){
+               gamma[current_state] += alpha[current_ob][current_state]
+                                       * beta[current_ob][current_state]
+                                       / p;
+               b[seqs[current_seq][current_ob]-'A'][current_state] += alpha[current_ob][current_state]
+                                                                      * beta[current_ob][current_state]
+                                                                      / p;
+               if(current_ob == 0) pi[current_state] += alpha[current_ob][current_state]
+                                                        * beta[current_ob][current_state]
+                                                        / p;
+               for(int s = 0; s < MAX_STATE; ++s){
+                  epsilon[current_state][s] += alpha[current_ob][current_state]
+                                               * hmm_initial->transition[current_state][s]
+                                               * hmm_initial->observation[seqs[current_seq][current_ob+1]-'A'][s]
+                                               * beta[current_ob+1][s]
+                                               / p;
+               }
+            }
+         }
+         // for last gamma
+         for(int current_state = 0; current_state < MAX_STATE; ++current_state){
+            gamma[current_state] += alpha[SEQ_LENGTH-1][current_state]
+                                    * beta[SEQ_LENGTH-1][current_state]
+                                    / p;
+         }
+
+      }
+      for(int current_state = 0; current_state < MAX_STATE; ++current_state){
+         hmm_initial->initial[current_state] = pi[current_state] / MAX_SEQ;
+         for(int s = 0; s < MAX_STATE; ++s){
+            hmm_initial->transition[current_state][s] = epsilon[current_state][s] / gamma[current_state];
+         }
+         for(int o = 0; o < MAX_OBSERV; ++o){
+            hmm_initial->observation[o][current_state] = b[o][current_state] / gamma[current_state];
          }
       }
-
-      // termination
-      for(int current_state = 0; current_state < MAX_STATE; ++current_state){
-         break;
-      }
-
    }
 
    // test
+
 
    // dump the trained model to file
    FILE* pfile;
