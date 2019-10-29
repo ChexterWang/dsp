@@ -13,7 +13,7 @@ train: src/train.c
 test: src/test.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) -Iinc
 
-accuracy: src/accuracy.c
+accuracy: util/accuracy.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) -Iinc
 
 clean:
