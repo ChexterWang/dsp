@@ -4,3 +4,6 @@
 **/hw1/*.o
 **/hw1/output
 **/hw1/src/test_hmm.c
+**/hw1/out.csv
+**/hw1/qa.pdf
+**/hw1/result.txt
