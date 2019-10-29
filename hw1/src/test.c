@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 
 #define MAX_MODELS 5
 #define MAX_SEQ 2500
@@ -57,9 +58,48 @@ int main(int argc, char const *argv[]) {
 
    // TODO: test
    for(int current_seq = 0; current_seq < MAX_SEQ; ++current_seq){
-      char(*delta)[MAX_STATE] = new char[SEQ_LENGTH][MAX_STATE];
-      for(int s = 0; s < MAX_STATE; ++s){
-         break;
+
+      for(int m = 0; m < MAX_MODELS; ++m){
+
+         int c = 0;
+
+         // initialization: delta
+         double(*delta)[MAX_STATE] = new double[SEQ_LENGTH][MAX_STATE];
+         c = seqs[current_seq][0]-'A';
+         for(int i = 0; i < MAX_STATE; ++i){
+            delta[0][i] = hmm[m].initial[i]
+                          * hmm[m].observation[c][i];
+         }
+
+         // recursion
+         for(int t = 1; t < SEQ_LENGTH; ++t){
+            c = seqs[current_seq][t]-'A';
+            for(int j = 0; j < MAX_STATE; ++j){
+               double preMax = delta[t-1][0]*hmm[m].transition[0][j];
+               for(int i = 1; i < MAX_STATE; ++i){
+                  if(delta[t-1][i]*hmm[m].transition[i][j] > preMax)
+                     preMax = delta[t-1][i]*hmm[m].transition[i][j];
+               }
+               delta[t][j] = preMax * hmm[m].observation[c][j];
+            }
+         }
+
+         // termination
+         double max = delta[SEQ_LENGTH-1][0];
+         for(int i = 1; i < MAX_STATE; ++i){
+            if(delta[SEQ_LENGTH-1][i] > max){
+               max = delta[SEQ_LENGTH-1][i];
+            }
+         }
+
+         // find the highest probability among all models
+         if((m == 0) || max > p[current_seq]){
+            p[current_seq] = max;
+            for(int i = 0; i < 256; ++i){
+               result[current_seq][i] = models[m][i];
+            }
+         }
+
       }
    }
 

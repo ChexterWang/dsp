@@ -1,0 +1,18 @@
+#!/bin/bash
+if [ "$1" == "train" ]; then
+   if [ "$2" == "gdb" ]; then
+      gdb --args ./train 5 ./model_init.txt ./data/train_seq_01.txt ./model_01.txt
+   else
+      /usr/bin/time -f "time: %E" ./train 200 ./model_init.txt ./data/train_seq_01.txt ./model_01.txt
+      /usr/bin/time -f "time: %E" ./train 200 ./model_init.txt ./data/train_seq_02.txt ./model_02.txt
+      /usr/bin/time -f "time: %E" ./train 200 ./model_init.txt ./data/train_seq_03.txt ./model_03.txt
+      /usr/bin/time -f "time: %E" ./train 200 ./model_init.txt ./data/train_seq_04.txt ./model_04.txt
+      /usr/bin/time -f "time: %E" ./train 200 ./model_init.txt ./data/train_seq_05.txt ./model_05.txt
+   fi
+elif [ "$1" == "test" ]; then
+   if [ "$2" == "gdb" ]; then
+      gdb --args ./test ./modellist.txt ./data/test_seq.txt ./result.txt
+   else
+      /usr/bin/time -f "time: %E" ./test ./modellist.txt ./data/test_seq.txt ./result.txt
+   fi
+fi
