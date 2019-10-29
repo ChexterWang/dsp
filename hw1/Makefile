@@ -1,6 +1,7 @@
 .PHONY: all clean run
 CC=g++
-CFLAGS=-g -Wall -std=c++11
+CFLAGS=-Ofast -std=c++11
+DFLAGS=-g -Wall -std=c++11
 LDFLAGS=-lm
 TARGET=train test
 
@@ -10,7 +11,7 @@ train: src/train.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) -Iinc
 
 test: src/test.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) -Iinc
+	$(CC) -o $@ $^ $(DFLAGS) $(LDFLAGS) -Iinc
 
 clean:
 	rm -f $(TARGET)
