@@ -10,11 +10,10 @@ using namespace std;
 
 int main(){
 
-   ifstream* fr = new ifstream("./result.txt");
+   ifstream* fr = new ifstream("./out/result.txt");
    char(*res)[256] = new char[MAX_SEQ][256];
    for(int i = 0; i < MAX_SEQ; ++i){
       fr->getline(res[i], 256);
-      res[i][12] = '\0';
    }
    fr->close();
 
@@ -26,7 +25,7 @@ int main(){
 
    float count = 0;
    for(int i = 0; i < MAX_SEQ; ++i){
-      if(res[i][7] != lbl[i][7]){
+      if(res[i][14] != lbl[i][7]){
          ++count;
       }
    }

@@ -8,13 +8,13 @@ TARGET=train test accuracy
 all: $(TARGET)
 
 train: src/train.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) -Iinc
+	$(CC) -o bin/$@ $^ $(CFLAGS) $(LDFLAGS) -Iinc
 
 test: src/test.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) -Iinc
+	$(CC) -o bin/$@ $^ $(CFLAGS) $(LDFLAGS) -Iinc
 
 accuracy: util/accuracy.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) -Iinc
+	$(CC) -o bin/$@ $^ $(CFLAGS) $(LDFLAGS) -Iinc
 
 clean:
-	rm -f $(TARGET)
+	rm -f bin/$(TARGET)

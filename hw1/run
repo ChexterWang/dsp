@@ -1,22 +1,22 @@
 #!/bin/bash
 if [ "$1" == "train" ]; then
    if [ "$2" == "gdb" ]; then
-      gdb --args ./train 5 ./model_init.txt ./data/train_seq_01.txt ./model_01.txt
+      gdb --args ./bin/train 5 ./models/model_init.txt ./data/train_seq_01.txt ./models/model_01.txt
    else
-      /usr/bin/time -f "time: %E" ./train 100 ./model_init.txt ./data/train_seq_01.txt ./model_01.txt
-      /usr/bin/time -f "time: %E" ./train 100 ./model_init.txt ./data/train_seq_02.txt ./model_02.txt
-      /usr/bin/time -f "time: %E" ./train 100 ./model_init.txt ./data/train_seq_03.txt ./model_03.txt
-      /usr/bin/time -f "time: %E" ./train 100 ./model_init.txt ./data/train_seq_04.txt ./model_04.txt
-      /usr/bin/time -f "time: %E" ./train 100 ./model_init.txt ./data/train_seq_05.txt ./model_05.txt
+      /usr/bin/time -f "time: %E" ./bin/train 100 ./models/model_init.txt ./data/train_seq_01.txt ./models/model_01.txt
+      /usr/bin/time -f "time: %E" ./bin/train 100 ./models/model_init.txt ./data/train_seq_02.txt ./models/model_02.txt
+      /usr/bin/time -f "time: %E" ./bin/train 100 ./models/model_init.txt ./data/train_seq_03.txt ./models/model_03.txt
+      /usr/bin/time -f "time: %E" ./bin/train 100 ./models/model_init.txt ./data/train_seq_04.txt ./models/model_04.txt
+      /usr/bin/time -f "time: %E" ./bin/train 100 ./models/model_init.txt ./data/train_seq_05.txt ./models/model_05.txt
    fi
 elif [ "$1" == "test" ]; then
    if [ "$2" == "gdb" ]; then
-      gdb --args ./test ./modellist.txt ./data/test_seq.txt ./result.txt
+      gdb --args ./bin/test ./modellist.txt ./data/test_seq.txt ./out/result.txt
    else
-      /usr/bin/time -f "time: %E" ./test ./modellist.txt ./data/test_seq.txt ./result.txt
+      /usr/bin/time -f "time: %E" ./bin/test ./modellist.txt ./data/test_seq.txt ./out/result.txt
    fi
 else
-   echo 0,1 > out.csv
+   echo 0,1 > out/out.csv
    declare -i a
    declare -i b
    declare -i c
@@ -25,13 +25,13 @@ else
    c=$3
    for i in $(seq $a $b $c);
    do
-      ./train $i ./model_init.txt ./data/train_seq_01.txt ./model_01.txt
-      ./train $i ./model_init.txt ./data/train_seq_02.txt ./model_02.txt
-      ./train $i ./model_init.txt ./data/train_seq_03.txt ./model_03.txt
-      ./train $i ./model_init.txt ./data/train_seq_04.txt ./model_04.txt
-      ./train $i ./model_init.txt ./data/train_seq_05.txt ./model_05.txt
-      ./test ./modellist.txt ./data/test_seq.txt ./result.txt
+      ./bin/train $i ./models/model_init.txt ./data/train_seq_01.txt ./models/model_01.txt
+      ./bin/train $i ./models/model_init.txt ./data/train_seq_02.txt ./models/model_02.txt
+      ./bin/train $i ./models/model_init.txt ./data/train_seq_03.txt ./models/model_03.txt
+      ./bin/train $i ./models/model_init.txt ./data/train_seq_04.txt ./models/model_04.txt
+      ./bin/train $i ./models/model_init.txt ./data/train_seq_05.txt ./models/model_05.txt
+      ./bin/test ./modellist.txt ./data/test_seq.txt ./out/result.txt
       acc=$(./accuracy)
-      echo $i,$acc >> out.csv
+      echo $i,$acc >> out/out.csv
    done
 fi
