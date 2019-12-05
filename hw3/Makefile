@@ -1,4 +1,4 @@
-SRIPATH ?= /root/srilm-1.5.10
+SRIPATH ?= /mnt/c/Users/ChexterWang/Documents/ForGitProjects/dsp/hw3/srilm
 MACHINE_TYPE ?= i686-m64
 INC_PATH ?= inc
 SRC_PATH ?= src
@@ -25,8 +25,11 @@ $(TARGET): $(OBJ) -loolm -ldstruct -lmisc
 all: $(TARGET)
 
 map:
-	@#TODO
-	@#python3 mapping.py $(FROM) $(TO)
+	@echo 'Compiling src/map.cpp and generating executable...'
+	@g++ -o $(SRC_PATH)/map $(SRC_PATH)/map.cpp
+	@echo 'Generating map file...'
+	@$(SRC_PATH)/map $(FROM) $(TO)
+	@echo 'Complete!'
 
 clean:
 	$(RM) $(OBJ) $(TARGET)
