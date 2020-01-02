@@ -1,35 +1,41 @@
-SRIPATH ?= /mnt/c/Users/ChexterWang/Documents/ForGitProjects/dsp/hw3/srilm
+SRIPATH ?= /home/chexterwang/download/dsp_hw3/srilm-1.5.10
 MACHINE_TYPE ?= i686-m64
 INC_PATH ?= inc
 SRC_PATH ?= src
 
 CXX = g++
-CXXFLAGS = -O2 -I$(SRIPATH)/include -I$(INC_PATH)
+CXXFLAGS = -O3 -I$(SRIPATH)/include -I$(INC_PATH) -Wall --std=c++11
 vpath lib%.a $(SRIPATH)/lib/$(MACHINE_TYPE)
 vpath %.c $(SRC_PATH)
 vpath %.cpp $(SRC_PATH)
 
 TARGET = mydisambig
-SRC = mydisambig.cpp
-OBJ = $(SRC:.cpp=.o)
+SRC = $(SRC_PATH)/mydisambig.cpp
+OBJ = $(SRC_PATH)/mydisambig.o
 FROM ?= Big5-ZhuYin.map
 TO ?= ZhuYin-Big5.map
 .PHONY: all clean map
 
 $(TARGET): $(OBJ) -loolm -ldstruct -lmisc
-	$(CXX) $(LDFLAGS) -o $@ $^
+	@echo 'Linking object files (mydisambig, liboolm, libdstruct, libmisc) ...'
+	@$(CXX) $(LDFLAGS) -o $@ $^
+	@echo 'Complete!'
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+	@echo 'Compiling src/mydisambig.cpp...'
+	@$(CXX) $(CXXFLAGS) -c $^ -o $@
 
 all: $(TARGET)
 
 map:
 	@echo 'Compiling src/map.cpp and generating executable...'
-	@g++ -o $(SRC_PATH)/map $(SRC_PATH)/map.cpp
+	@g++ -o map $(SRC_PATH)/map.cpp
 	@echo 'Generating map file...'
-	@$(SRC_PATH)/map $(FROM) $(TO)
+	@./map $(FROM) $(TO)
 	@echo 'Complete!'
 
 clean:
-	$(RM) $(OBJ) $(TARGET)
+	@echo 'Removing executables...'
+	@$(RM) $(TARGET) ./map
+	@echo 'Removing object files...'
+	@$(RM) $(SRC_PATH)/*.o
