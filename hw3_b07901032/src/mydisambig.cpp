@@ -8,7 +8,6 @@
 #include "File.h"
 #include "Ngram.h"
 #include "Vocab.h"
-#include "myUsage.h"
 
 using namespace std;
 
@@ -24,8 +23,6 @@ Mynode nextNode(Vocab& v, Ngram& lm, Mygraph& g, string str);
 float biProb(Vocab& v, Ngram& lm, const char* c1, const char* c2);
 
 int main(int argc, char** argv){
-   MyUsage us;
-   us.report(false, false);
    // file error handling
    if(argc!=5){
       cerr << "[ERROR] Usage: ./disambig <segemented file> <mapping file> <language model> <output file>\n";
@@ -134,7 +131,6 @@ int main(int argc, char** argv){
    }
    ifs->close();
    ofs->close();
-   us.report(true, true);
 }
 
 bool checkFile(string&& filename){

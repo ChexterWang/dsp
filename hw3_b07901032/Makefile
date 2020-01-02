@@ -1,4 +1,4 @@
-SRIPATH ?= /mnt/c/Users/ChexterWang/Documents/ForGitProjects/dsp/hw3/srilm
+SRIPATH ?= /home/chexterwang/download/dsp_hw3/srilm-1.5.10
 MACHINE_TYPE ?= i686-m64
 INC_PATH ?= inc
 SRC_PATH ?= src
@@ -18,7 +18,7 @@ TO ?= ZhuYin-Big5.map
 
 $(TARGET): $(OBJ) -loolm -ldstruct -lmisc
 	@echo 'Linking object files (mydisambig, liboolm, libdstruct, libmisc) ...'
-	@$(CXX) -lpthread -fopenmp -lm -lz -o $@ $^
+	@$(CXX) $(LDFLAGS) -o $@ $^
 	@echo 'Complete!'
 
 %.o: %.cpp
